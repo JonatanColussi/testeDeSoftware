@@ -19,13 +19,11 @@
         }
 
         this.setDependentes = function(dependentes){
-            console.log(dependentes);
             if(dependentes == undefined || dependentes == null || dependentes == '')
                 this.dependentes = 0;
             else
                 this.dependentes = parseInt(dependentes);
         }
-
         
         this.getSalarioLiquido = function(){
             return this.salarioLiquido;
@@ -77,5 +75,6 @@
     IR.calcular();
     alert("O seu salário liquido será: R$ "+IR.getSalarioLiquido());
 	
+//Fonte: http://www.calculador.com.br/calculo/salario-liquido
 //Fonte: http://economia.uol.com.br/empregos-e-carreiras/noticias/redacao/2013/01/01/imposto-de-renda-e-inss-entenda-os-descontos-no-seu-salario.htm
 </script>
