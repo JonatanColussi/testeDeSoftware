@@ -1,0 +1,62 @@
+﻿<script type="text/javascript">
+    function ImpostoRenda(){
+        var salarioBruto;
+        var dependentes;
+        var aliquota;
+        var deducao;
+        var inss;
+        var imposto;
+        var salarioLiquido;
+        
+        this.setSalarioBruto = function(salarioBruto){
+            this.salarioBruto = parseFloat(salarioBruto);
+        }
+
+        this.setDependentes = function(dependentes){
+            this.dependentes = parseInt(dependentes);
+        }
+        
+        this.getSalarioLiquido = function(){
+            return this.salarioLiquido;
+        }
+        
+        this.calcularTaxas = function(){
+            this.inss = this.salarioBruto*0.11;
+
+            if(this.salarioBruto <= 1787.77){
+                this.aliquota = 0;
+                this.deducao = 0;
+            }else if(this.salarioBruto >= 1787.78 && this.salarioBruto <= 2679.29){
+                this.aliquota = 7.5;
+                this.deducao = 134.08;
+            }else if(this.salarioBruto >= 2679.30 && this.salarioBruto <= 3572.43){
+                this.aliquota = 15;
+                this.deducao = 355.03;
+            }else if(this.salarioBruto >= 3572.44 && this.salarioBruto <= 4463.81){
+                this.aliquota = 22.5;
+                this.deducao = 602.96;
+            }else if(this.salarioBruto >  4463.81){
+                this.aliquota = 27.5;
+                this.deducao = 826.15;
+            }
+        }
+
+        this.calcularIR = function(){
+            this.imposto = ((this.salarioBruto - this.dependentes*(179.71) - this.inss) * this.aliquota)/100 - this.deducao;
+        }
+
+        this.calcularSalarioLiquido = function() {
+        	this.salarioLiquido = (this.salarioBruto - (this.imposto + this.inss)).toFixed(2);
+        }
+    }
+    
+    var IR = new ImpostoRenda();
+    IR.setSalarioBruto(prompt("Informe o seu salário bruto:"));
+    IR.setDependentes(prompt("Informe o numero de dependentes:"));
+    IR.calcularTaxas();
+    IR.calcularIR();
+    IR.calcularSalarioLiquido();
+    alert("O seu salário liquido será: R$ "+IR.getSalarioLiquido());
+	
+//Fonte: http://economia.uol.com.br/empregos-e-carreiras/noticias/redacao/2013/01/01/imposto-de-renda-e-inss-entenda-os-descontos-no-seu-salario.htm
+</script>
