@@ -7,55 +7,74 @@
         var inss;
         var imposto;
         var salarioLiquido;
+        var deducaoPorDependente;
+        this.deducaoPorDependente = 189.59;
         
         this.setSalarioBruto = function(salarioBruto){
             this.salarioBruto = parseFloat(salarioBruto);
         }
 
-        this.setDependentes = function(dependentes){
-            this.dependentes = parseInt(dependentes);
+        this.getSalarioBruto = function(){
+            return this.salarioBruto;
         }
+
+        this.setDependentes = function(dependentes){
+            console.log(dependentes);
+            if(dependentes == undefined || dependentes == null || dependentes == '')
+                this.dependentes = 0;
+            else
+                this.dependentes = parseInt(dependentes);
+        }
+
         
         this.getSalarioLiquido = function(){
             return this.salarioLiquido;
         }
         
         this.calcularTaxas = function(){
-            this.inss = this.salarioBruto*0.11;
+            if(this.salarioBruto <= 1556.94) this.inss = this.salarioBruto*0.08;
+            else if(this.salarioBruto >= 1556.95 && this.salarioBruto <= 2594.92) this.inss = this.salarioBruto*0.09;
+            else if(this.salarioBruto >=  2594.93 && this.salarioBruto <= 5189.82) this.inss = this.salarioBruto*0.011;
 
-            if(this.salarioBruto <= 1787.77){
+            if(this.salarioBruto <= 1903.98){
                 this.aliquota = 0;
                 this.deducao = 0;
-            }else if(this.salarioBruto >= 1787.78 && this.salarioBruto <= 2679.29){
+            }else if(this.salarioBruto >= 1903.99 && this.salarioBruto <= 2826.65){
                 this.aliquota = 7.5;
-                this.deducao = 134.08;
-            }else if(this.salarioBruto >= 2679.30 && this.salarioBruto <= 3572.43){
+                this.deducao = 142.8;
+            }else if(this.salarioBruto >= 2826.66 && this.salarioBruto <= 3751.05){
                 this.aliquota = 15;
-                this.deducao = 355.03;
-            }else if(this.salarioBruto >= 3572.44 && this.salarioBruto <= 4463.81){
+                this.deducao = 354.8;
+            }else if(this.salarioBruto >= 3751.06 && this.salarioBruto <= 4664.68){
                 this.aliquota = 22.5;
-                this.deducao = 602.96;
-            }else if(this.salarioBruto >  4463.81){
+                this.deducao = 636.13;
+            }else if(this.salarioBruto >  4664.68){
                 this.aliquota = 27.5;
-                this.deducao = 826.15;
+                this.deducao = 869.36;
             }
         }
 
         this.calcularIR = function(){
-            this.imposto = ((this.salarioBruto - this.dependentes*(179.71) - this.inss) * this.aliquota)/100 - this.deducao;
+            this.imposto = ((this.salarioBruto - this.dependentes*(this.deducaoPorDependente) - this.inss) * this.aliquota)/100 - this.deducao;
         }
 
-        this.calcularSalarioLiquido = function() {
+        this.calcularSalarioLiquido = function(){
         	this.salarioLiquido = (this.salarioBruto - (this.imposto + this.inss)).toFixed(2);
+        }
+
+        this.calcular = function(){
+            this.calcularTaxas();
+            this.calcularIR();
+            this.calcularSalarioLiquido();
         }
     }
     
     var IR = new ImpostoRenda();
-    IR.setSalarioBruto(prompt("Informe o seu salário bruto:"));
+    do{
+        IR.setSalarioBruto(prompt("Informe o seu salário bruto:"));
+    }while(!(IR.getSalarioBruto() > 0));
     IR.setDependentes(prompt("Informe o numero de dependentes:"));
-    IR.calcularTaxas();
-    IR.calcularIR();
-    IR.calcularSalarioLiquido();
+    IR.calcular();
     alert("O seu salário liquido será: R$ "+IR.getSalarioLiquido());
 	
 //Fonte: http://economia.uol.com.br/empregos-e-carreiras/noticias/redacao/2013/01/01/imposto-de-renda-e-inss-entenda-os-descontos-no-seu-salario.htm
