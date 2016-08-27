@@ -7,6 +7,8 @@
         var inss;
         var imposto;
         var salarioLiquido;
+        var salarioBase;
+        var percentINSS;
         var deducaoPorDependente;
         this.deducaoPorDependente = 189.59;
         
@@ -16,6 +18,22 @@
 
         this.getSalarioBruto = function(){
             return this.salarioBruto;
+        }
+
+        this.getPercentINSS = function(){
+        	return this.percentINSS;
+        }
+
+        this.getSalarioBase = function(){
+        	return this.salarioBase;
+        }
+
+        this.getAliquota = function(){
+            return this.aliquota;
+        }
+
+        this.getDependentes = function(){
+        	return this.dependentes;
         }
 
         this.setDependentes = function(dependentes){
@@ -30,9 +48,10 @@
         }
         
         this.calcularTaxas = function(){
-            if(this.salarioBruto <= 1556.94) this.inss = this.salarioBruto*0.08;
-            else if(this.salarioBruto >= 1556.95 && this.salarioBruto <= 2594.92) this.inss = this.salarioBruto*0.09;
-            else if(this.salarioBruto >=  2594.93 && this.salarioBruto <= 5189.82) this.inss = this.salarioBruto*0.011;
+            if(this.salarioBruto <= 1556.94) this.percentINSS = 8;
+            else if(this.salarioBruto >= 1556.95 && this.salarioBruto <= 2594.92) this.percentINSS = 9;
+           // else if(this.salarioBruto >=  2594.93 && this.salarioBruto <= 5189.82) this.percentINSS = 11;
+            else if(this.salarioBruto >=  2594.93) this.percentINSS = 11;
 
             if(this.salarioBruto <= 1903.98){
                 this.aliquota = 0;
@@ -52,8 +71,15 @@
             }
         }
 
+        this.calcularINSS = function(){
+        	this.inss = this.salarioBruto*(this.percentINSS/100);
+        }
+
+        this.calcularSalarioBase = function(){
+        	this.salarioBase = this.salarioBruto-this.inss;
+        }
         this.calcularIR = function(){
-            this.imposto = ((this.salarioBruto - this.dependentes*(this.deducaoPorDependente) - this.inss) * this.aliquota)/100 - this.deducao;
+            this.imposto = ((this.salarioBase - this.dependentes*(this.deducaoPorDependente)) * this.aliquota)/100 - this.deducao;
         }
 
         this.calcularSalarioLiquido = function(){
@@ -62,19 +88,32 @@
 
         this.calcular = function(){
             this.calcularTaxas();
+            this.calcularINSS();
+            this.calcularSalarioBase();
             this.calcularIR();
             this.calcularSalarioLiquido();
         }
     }
     
-    var IR = new ImpostoRenda();
+    var IR = new ImpostoRenda()
+
     do{
         IR.setSalarioBruto(prompt("Informe o seu salário bruto:"));
+        if(!(IR.getSalarioBruto() > 0)) alert("Salário inválido");
     }while(!(IR.getSalarioBruto() > 0));
-    IR.setDependentes(prompt("Informe o numero de dependentes:"));
+
+    do{
+        IR.setDependentes(prompt("Informe o numero de dependentes:"));
+        if(!Number.isInteger(IR.getDependentes())) alert("Número de dependentes inválido");
+    }while(!Number.isInteger(IR.getDependentes()));
+    
     IR.calcular();
-    alert("O seu salário liquido será: R$ "+IR.getSalarioLiquido());
+
+    document.write("Salário bruto: R$ "+IR.getSalarioBruto().toFixed(2).replace('.', ','));
+    document.write("<br>Faixa INSS: "+IR.getPercentINSS().toFixed(2).replace('.', ',')+"%");
+    document.write("<br>Salário Base: R$ "+IR.getSalarioBase().toFixed(2).replace('.', ','));
+    document.write("<br>Faixa IRRF: "+IR.getAliquota().toFixed(2).replace('.', ',')+"%");
+    document.write("<br>Salário liquido: R$ "+IR.getSalarioLiquido().replace('.', ','));
 	
-//Fonte: http://www.calculador.com.br/calculo/salario-liquido
 //Fonte: http://economia.uol.com.br/empregos-e-carreiras/noticias/redacao/2013/01/01/imposto-de-renda-e-inss-entenda-os-descontos-no-seu-salario.htm
 </script>
